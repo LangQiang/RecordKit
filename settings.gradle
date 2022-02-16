@@ -1,0 +1,2 @@
+rootProject.name = "RecordKit"
+include ':app'
