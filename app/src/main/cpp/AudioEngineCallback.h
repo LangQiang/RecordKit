@@ -10,11 +10,10 @@
 #include "Log.h"
 #include <cstdint>
 #include <exception>
+#include "global/GlobalConfig.h"
 
 class AudioEngineCallback {
 public:
-
-    JavaVM *g_VM;
 
     void onRecordDataCallback(short *data, int32_t length);
 

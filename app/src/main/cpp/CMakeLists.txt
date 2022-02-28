@@ -24,23 +24,28 @@ include_directories(${OBOE_DIR}/oboe-core/include ${OBOE_DIR}/oboe-core/shared)
 # You can define multiple libraries, and CMake builds them for you.
 # Gradle automatically packages shared libraries with your APK.
 
-set (APP_SOURCES
-        native-lib.cpp
-        jni_bridge.cpp
-        AudioEngine.h
-        AudioEngine.cpp
-        AudioEngineCallback.h
-        AudioEngineCallback.cpp
-        RecordingCallBack.h
-        RecordingCallBack.cpp
-        SoundRecording.h
-        SoundRecording.cpp
-        Log.h
-        wave/WaveFormat.h
-        wave/WaveFormat.cpp
-        AudioConfig.h
-        AudioConfig.cpp
-        )
+#set (APP_SOURCES
+#        native-lib.cpp
+#        jni_bridge.cpp
+#        AudioEngine.h
+#        AudioEngine.cpp
+#        AudioEngineCallback.h
+#        AudioEngineCallback.cpp
+#        RecordingCallBack.h
+#        RecordingCallBack.cpp
+#        SoundRecording.h
+#        SoundRecording.cpp
+#        Log.h
+#        wave/WaveFormat.h
+#        wave/WaveFormat.cpp
+#        AudioConfig.h
+#        AudioConfig.cpp
+#        )
+aux_source_directory(../cpp APP_SOURCES)
+aux_source_directory(../cpp/wave APP_SOURCES)
+aux_source_directory(../cpp/utils APP_SOURCES)
+aux_source_directory(../cpp/global APP_SOURCES)
+
 
 add_library( # Sets the name of the library.
         recordkit

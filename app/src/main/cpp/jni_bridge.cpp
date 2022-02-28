@@ -4,10 +4,16 @@
 #include <jni.h>
 #include "AudioEngine.h"
 #include "AudioEngineCallback.h"
+#include "utils/SysUtils.h"
+#include "global/GlobalConfig.h"
 
 static AudioEngine *audioEngine = nullptr;
 
 static AudioEngineCallback *audioEngineCallback = nullptr;
+
+
+JavaVM *g_VM = nullptr;
+int64_t mainThreadId = 0;
 
 extern "C"
 JNIEXPORT jint JNICALL
@@ -18,8 +24,11 @@ Java_com_lq_record_LEngine_init(JNIEnv *env, jobject thiz, jobject l_engine_call
         audioEngine = new AudioEngine();
     }
 
+    mainThreadId = SysUtils::getCurrentThreadId();
+    LOGD("mainThreadId:%ld", mainThreadId);
+    (*env).GetJavaVM(&g_VM);
+
     audioEngineCallback = new AudioEngineCallback();
-    (*env).GetJavaVM(&audioEngineCallback->g_VM);
     audioEngineCallback->callback_J = (*env).NewGlobalRef(l_engine_callback);
     audioEngine->setDelegate(audioEngineCallback);
 

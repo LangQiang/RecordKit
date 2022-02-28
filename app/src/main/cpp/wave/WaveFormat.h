@@ -56,14 +56,14 @@ typedef struct WaveHeader {
 class WaveFormat {
 private:
 
-    int writeHeader(std::ofstream *outFile, WaveHeader *waveHeader);
+    static int writeHeader(std::ofstream *outFile, WaveHeader *waveHeader);
 
 public:
-    int pcm2WaveFromFile(const char *inputFile, const char *outPutFile, int32_t channels, int32_t sampleRate, int32_t bitsPerSample);
+    static int pcm2WaveFromFile(const char *inputFile, const char *outPutFile, int32_t channels, int32_t sampleRate, int32_t bitsPerSample);
 
-    int pcm2WaveFromData(int16_t *data, int32_t dataLength, const char *outPutFile, int32_t channels, int32_t sampleRate, int32_t bitsPerSample);
+    static int pcm2WaveFromData(int16_t *data, int32_t dataLength, const char *outPutFile, int32_t channels, int32_t sampleRate, int32_t bitsPerSample);
 
-    int savePatch(const int16_t *data, int32_t length);
+    static int savePatch(const int16_t *data, int32_t length);
 };
 
 
