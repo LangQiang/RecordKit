@@ -36,6 +36,7 @@ include_directories(${OBOE_DIR}/oboe-core/include ${OBOE_DIR}/oboe-core/shared)
 #        SoundRecording.h
 #        SoundRecording.cpp
 #        Log.h
+#        BlockingQueue.h
 #        wave/WaveFormat.h
 #        wave/WaveFormat.cpp
 #        AudioConfig.h

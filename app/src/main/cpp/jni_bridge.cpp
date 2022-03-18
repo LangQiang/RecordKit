@@ -7,6 +7,8 @@
 #include "utils/SysUtils.h"
 #include "global/GlobalConfig.h"
 
+#include "Test.h"
+
 static AudioEngine *audioEngine = nullptr;
 
 static AudioEngineCallback *audioEngineCallback = nullptr;
@@ -73,4 +75,12 @@ Java_com_lq_record_LEngine_saveToFile(JNIEnv *env, jobject thiz, jstring filePat
 
     path = env->GetStringUTFChars(filePath, nullptr);
     audioEngine->save(path);
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_lq_record_LEngine_test(JNIEnv *env, jclass thiz, jint test_type) {
+    int32_t type = test_type;
+    if (type == 1) {
+        Test::test_BlockingQueue();
+    }
 }

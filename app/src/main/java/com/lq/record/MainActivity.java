@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -42,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
 
+    private final LEngine lEngine = new LEngine();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
 
         File file = new File(getExternalFilesDir(null), "record2.pcm");
         Log.e("filePath", file.getAbsolutePath());
-        LEngine lEngine = new LEngine();
+
 
         lEngine.init(new LEngineCallback() {
             @Override
@@ -77,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
         Button start = binding.start;
         Button stop = binding.stop;
         Button save = binding.save;
+        Button test = binding.test;
 
         start.setOnClickListener(v -> {
             new Thread(lEngine::startRecording).start();
@@ -93,6 +97,12 @@ public class MainActivity extends AppCompatActivity {
                 lEngine.saveToFile(file.getAbsolutePath());
             }).start();
         });
+
+        test.setOnClickListener(this::testOnclick);
+    }
+
+    private void testOnclick(View view) {
+        LEngine.test(1);
     }
 
     /**
@@ -100,4 +110,5 @@ public class MainActivity extends AppCompatActivity {
      * which is packaged with this application.
      */
     public native String stringFromJNI();
+
 }

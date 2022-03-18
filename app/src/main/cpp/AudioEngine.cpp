@@ -4,8 +4,16 @@
 
 #include "AudioEngine.h"
 #include "wave/WaveFormat.h"
+#include "pthread.h"
+
+void *write2(void *args) {
+    ((SoundRecording * )args)->write2();
+    return args;
+}
 
 void AudioEngine::start() {
+
+    mSoundRecording->isRunning = true;
 
     openRecordingStream();
 
@@ -14,9 +22,13 @@ void AudioEngine::start() {
     } else {
         LOGE("startRecording(): Failed to create recording (%p) stream", mRecordingStream);
     }
+    pthread_t pid;
+    pthread_create(&pid, nullptr, write2, mSoundRecording);
 }
 
 void AudioEngine::stop() {
+
+    mSoundRecording->isRunning = false;
 
     LOGD("stop");
 

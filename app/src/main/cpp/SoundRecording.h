@@ -6,24 +6,28 @@
 #include <cstdint>
 #include <array>
 #include <atomic>
-#include <oboe/Definitions.h>
-#include <android/log.h>
-#include <string>
-#include <ios>
-#include "wave/WaveFormat.h"
-#include "Log.h"
+#include "BlockingQueue.h"
+
 
 
 constexpr int kMaxSamples = 480000; // 10s of audio data @ 48kHz
+
+struct DataPatch {
+    int16_t *data;
+    int32_t numSamples;
+};
 
 class SoundRecording {
 
 public:
     int32_t write(const int16_t *sourceData, int32_t numSamples);
+    int32_t write2();
     int32_t read(int16_t *targetData, int32_t numSamples);
     int32_t save(const char *outPutFile, int32_t channels, int32_t sampleRate, int32_t bitsPerSample);
 
     int32_t getTotalSamples() const { return mTotalSamples; };
+
+    bool isRunning;
 
     std::atomic<int32_t> mIteration { 1 };
     std::atomic<int32_t> mWriteIndex { 0 };
@@ -34,7 +38,7 @@ public:
     int16_t* mData = new int16_t[kMaxSamples]{0};
     int16_t gain_factor = 2;
 
-    WaveFormat *waveFormat = new WaveFormat();
+    BlockingQueue<DataPatch> blockingQueue;
 };
 
 #endif //OBOE_RECORDER_SOUNDRECORDING_H

@@ -10,4 +10,6 @@ public class LEngine {
 
     public native void saveToFile(String path);
 
+    public native static void test(int testType);
+
 }
