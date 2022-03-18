@@ -65,7 +65,7 @@ int32_t SoundRecording::save(const char *outPutFile, int32_t channels, int32_t s
     WaveFormat::pcm2WaveFromData(mData, mTotalSamples, outPutFile, channels, sampleRate, bitsPerSample);
 
 //    waveFormat->savePatch(sourceData, numSamples);
-    WaveFormat::savePatch(nullptr, 0);
+    WaveFormat::pcm2WaveFromFile("/storage/emulated/0/Android/data/com.lq.record/files/test.pcm", "/storage/emulated/0/Android/data/com.lq.record/files/test.wav", channels, sampleRate, bitsPerSample);
 
     return 0;
 }

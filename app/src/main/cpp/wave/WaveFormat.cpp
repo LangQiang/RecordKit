@@ -10,12 +10,43 @@
 
 int WaveFormat::pcm2WaveFromFile(const char *file, const char *outPutFile, int32_t channels, int32_t sampleRate,
                                  int32_t bitsPerSample) {
+    std::ifstream ifs( file , std::ios::binary | std::ios::in );     //  要处理的文件
+    ifs.seekg( 0 , std::ios::end);                          //  文件指针指向末尾
+    int length  =  ifs.tellg();                            //  得到文件的长度
+    ifs.seekg ( 0 , std::ios::beg);
+
+    auto *waveHeader = new WaveHeader;
+    waveHeader->sampleRate = sampleRate;
+    waveHeader->channels = static_cast<int16_t>(channels);
+    waveHeader->bitsPerSample = static_cast<int16_t>(bitsPerSample);
+    waveHeader->dataCkSize = static_cast<int32_t>(sizeof (int16_t) * length);
+    waveHeader->riffCkSize = static_cast<int32_t>(waveHeader->dataCkSize + sizeof (WaveHeader) - 4 - 4);
+
+    std::ofstream outFile;
+    outFile.open(outPutFile, std::ios::out | std::ios::binary);
+
+    if (!outFile.is_open()) {
+        LOGE("pcm2WaveFromData open file fail");
+    }
+
+    writeHeader(&outFile, waveHeader);
+
+    while (!ifs.eof()) {
+        char buff[1024] = {'\0'};
+        ifs.read(buff, sizeof (char ) * 1024);
+        int realRead = ifs.gcount();
+        outFile.write(buff, realRead);
+    }
+
+    outFile.close();
+    ifs.close();
+    delete waveHeader;
     return 0;
 }
 
 int WaveFormat::pcm2WaveFromData(int16_t *data, int32_t dataLength, const char *outPutFile, int32_t channels, int32_t sampleRate, int32_t bitsPerSample) {
 
-    auto *waveHeader = new WaveHeader;;
+    auto *waveHeader = new WaveHeader;
     waveHeader->sampleRate = sampleRate;
     waveHeader->channels = static_cast<int16_t>(channels);
     waveHeader->bitsPerSample = static_cast<int16_t>(bitsPerSample);
