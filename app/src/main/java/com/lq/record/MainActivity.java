@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         tv.setText(stringFromJNI());
 
 
-        File file = new File(getExternalFilesDir(null), "record2.pcm");
+        File file = new File(getExternalFilesDir(null), "record2.wav");
         Log.e("filePath", file.getAbsolutePath());
 
 
@@ -81,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
         Button stop = binding.stop;
         Button save = binding.save;
         Button test = binding.test;
+        Button mix = binding.mix;
 
         start.setOnClickListener(v -> {
             new Thread(lEngine::startRecording).start();
@@ -99,6 +100,14 @@ public class MainActivity extends AppCompatActivity {
         });
 
         test.setOnClickListener(this::testOnclick);
+
+        mix.setOnClickListener(this::mixClick);
+    }
+
+    private void mixClick(View view) {
+        String mix1 = new File(getExternalFilesDir(null), "mix1.wav").getAbsolutePath();
+        String mix2 = new File(getExternalFilesDir(null), "mix2.wav").getAbsolutePath();
+        lEngine.mix(mix1, mix2);//同样位深 码率 声道 先忽略参数
     }
 
     private void testOnclick(View view) {

@@ -30,6 +30,8 @@ public:
 
     void setDelegate(AudioEngineCallback *audioEngineCallback);
 
+    void mix(const char *mix1, const char *mix2);
+
 private:
 
     SoundRecording *mSoundRecording = new SoundRecording();

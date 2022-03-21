@@ -15,9 +15,16 @@ class BlockingQueue {
     std::mutex _mutex;
     std::condition_variable _condition;
     std::queue<T> _queue;
+    bool _interrupt;
+
+    void clear(std::queue<T>& q) {
+        std::queue<T> empty;
+        swap(empty, q);
+    }
 
 public:
     bool isEmpty() {
+        std::unique_lock<std::mutex> lock(_mutex);
         return _queue.empty();
     }
 
@@ -33,7 +40,10 @@ public:
     T pop() {
         std::unique_lock<std::mutex> lock(_mutex);
         for(;;) {
-            if (isEmpty()) {
+            if (_queue.empty()) {
+                if (_interrupt) {
+                    throw "interrupt";
+                }
                 LOGE("wait");
                 _condition.wait(lock);
             } else {
@@ -44,6 +54,19 @@ public:
         _queue.pop();
         LOGE("pop%d", ret);
         return ret;
+    }
+
+    void interrupt() {
+        std::unique_lock<std::mutex> lock(_mutex);
+        _interrupt = true;
+        _condition.notify_one();
+    }
+
+    void reset() {
+        std::unique_lock<std::mutex> lock(_mutex);
+        _interrupt = false;
+        clear(_queue);
+        _condition.notify_one();
     }
 
 };

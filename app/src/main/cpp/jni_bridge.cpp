@@ -19,8 +19,7 @@ int64_t mainThreadId = 0;
 
 extern "C"
 JNIEXPORT jint JNICALL
-Java_com_lq_record_LEngine_init(JNIEnv *env, jobject thiz, jobject l_engine_callback) {
-    // TODO: implement init()
+Java_com_lq_record_LEngine_init(JNIEnv *env, jobject jObj, jobject l_engine_callback) {
 
     if (audioEngine == nullptr) {
         audioEngine = new AudioEngine();
@@ -39,9 +38,7 @@ Java_com_lq_record_LEngine_init(JNIEnv *env, jobject thiz, jobject l_engine_call
 
 extern "C"
 JNIEXPORT jint JNICALL
-Java_com_lq_record_LEngine_startRecording(JNIEnv *env, jobject thiz) {
-
-    // TODO: implement startRecording()
+Java_com_lq_record_LEngine_startRecording(JNIEnv *env, jobject jObj) {
 
     if (audioEngine == nullptr) {
         LOGE("audioEngine is null, you must call init() method before calling this method");
@@ -52,8 +49,7 @@ Java_com_lq_record_LEngine_startRecording(JNIEnv *env, jobject thiz) {
 }
 extern "C"
 JNIEXPORT jint JNICALL
-Java_com_lq_record_LEngine_stopRecording(JNIEnv *env, jobject thiz) {
-    // TODO: implement stopRecording()
+Java_com_lq_record_LEngine_stopRecording(JNIEnv *env, jobject jObj) {
     if (audioEngine == nullptr) {
         LOGE("audioEngine is null, you must call init() method before calling this method");
         return -1;
@@ -65,8 +61,7 @@ Java_com_lq_record_LEngine_stopRecording(JNIEnv *env, jobject thiz) {
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_lq_record_LEngine_saveToFile(JNIEnv *env, jobject thiz, jstring filePath) {
-    // TODO: implement saveToFile()
+Java_com_lq_record_LEngine_saveToFile(JNIEnv *env, jobject jObj, jstring filePath) {
     if (audioEngine == nullptr) {
         LOGE("audioEngine is null, you must call init() method before calling this method");
         return;
@@ -78,9 +73,16 @@ Java_com_lq_record_LEngine_saveToFile(JNIEnv *env, jobject thiz, jstring filePat
 }
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_lq_record_LEngine_test(JNIEnv *env, jclass thiz, jint test_type) {
+Java_com_lq_record_LEngine_test(JNIEnv *env, jclass jCl, jint test_type) {
     int32_t type = test_type;
     if (type == 1) {
         Test::test_BlockingQueue();
     }
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_lq_record_LEngine_mix(JNIEnv *env, jobject jObj, jstring mix1, jstring mix2) {
+    const char *cMix1 = env->GetStringUTFChars(mix1, nullptr);
+    const char *cMix2 = env->GetStringUTFChars(mix2, nullptr);
+    audioEngine->mix(cMix1, cMix2);
 }

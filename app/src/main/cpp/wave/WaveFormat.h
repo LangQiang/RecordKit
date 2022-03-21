@@ -63,7 +63,6 @@ public:
 
     static int pcm2WaveFromData(int16_t *data, int32_t dataLength, const char *outPutFile, int32_t channels, int32_t sampleRate, int32_t bitsPerSample);
 
-    static int savePatch(const int16_t *data, int32_t length);
 };
 
 

@@ -10,16 +10,18 @@
 
 int WaveFormat::pcm2WaveFromFile(const char *file, const char *outPutFile, int32_t channels, int32_t sampleRate,
                                  int32_t bitsPerSample) {
+    remove(outPutFile);
     std::ifstream ifs( file , std::ios::binary | std::ios::in );     //  要处理的文件
     ifs.seekg( 0 , std::ios::end);                          //  文件指针指向末尾
     int length  =  ifs.tellg();                            //  得到文件的长度
+    LOGE("2 length:%d", length);
     ifs.seekg ( 0 , std::ios::beg);
 
     auto *waveHeader = new WaveHeader;
     waveHeader->sampleRate = sampleRate;
     waveHeader->channels = static_cast<int16_t>(channels);
     waveHeader->bitsPerSample = static_cast<int16_t>(bitsPerSample);
-    waveHeader->dataCkSize = static_cast<int32_t>(sizeof (int16_t) * length);
+    waveHeader->dataCkSize = static_cast<int32_t>(length);
     waveHeader->riffCkSize = static_cast<int32_t>(waveHeader->dataCkSize + sizeof (WaveHeader) - 4 - 4);
 
     std::ofstream outFile;
@@ -45,6 +47,11 @@ int WaveFormat::pcm2WaveFromFile(const char *file, const char *outPutFile, int32
 }
 
 int WaveFormat::pcm2WaveFromData(int16_t *data, int32_t dataLength, const char *outPutFile, int32_t channels, int32_t sampleRate, int32_t bitsPerSample) {
+
+    remove(outPutFile);
+
+
+    LOGE("1 length:%lu", sizeof (int16_t) * dataLength);
 
     auto *waveHeader = new WaveHeader;
     waveHeader->sampleRate = sampleRate;
@@ -99,18 +106,3 @@ void *test(void *arg) {
     return arg;
 }
 
-//todo lq test
-int WaveFormat::savePatch(const int16_t *data, int32_t length) {
-
-    const char *path = "/storage/emulated/0/Android/data/com.lq.record/files/record2.patch";
-
-    pthread_t pId;
-
-    pthread_create(&pId, nullptr, test, nullptr);
-
-    while (length++ < 100) {
-        LOGE("main thread invoke%d",  SysUtils::isMainThread());
-        sleep(1);
-    }
-    return 0;
-}
