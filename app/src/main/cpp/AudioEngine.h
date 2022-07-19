@@ -44,8 +44,6 @@ private:
 
     AudioStream *mPlaybackStream = nullptr;
 
-    AudioEngineCallback *delegate;
-
     void openRecordingStream();
     void startStream();
 

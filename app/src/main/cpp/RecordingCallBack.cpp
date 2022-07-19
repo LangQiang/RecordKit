@@ -15,7 +15,13 @@ RecordingCallBack::onAudioReady(oboe::AudioStream *audioStream, void *audioData,
     LOGI("read(): ");
     mSoundRecording->write(inputData, num);
 
+    delegate->onRecordDataCallback(inputData, num);
+
     return oboe::DataCallbackResult::Continue;
+}
+
+void RecordingCallBack::setDelegate(AudioEngineCallback *audioEngineCallback) {
+    delegate = audioEngineCallback;
 }
 
 

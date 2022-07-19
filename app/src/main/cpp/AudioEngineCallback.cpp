@@ -3,9 +3,13 @@
 //
 
 #include "AudioEngineCallback.h"
+#include "fft/FFTHelper.h"
 
 void AudioEngineCallback::onRecordDataCallback(short *data, int32_t length) {
     try {
+        //fft
+        short fftData[length];
+        FFTHelper::fft(data, length, fftData);
         JNIEnv *env;
         int mNeedDetach = 0;
         int getEnvStat = (*g_VM).GetEnv((void **)&env,JNI_VERSION_1_4);
@@ -38,8 +42,22 @@ void AudioEngineCallback::onRecordDataCallback(short *data, int32_t length) {
 
         (*env).CallVoidMethod(callback_J, javaCallbackId, inputArray, length);
 
+        //获取要回调的方法ID
+        jmethodID fftMethodId = (*env).GetMethodID(javaClass,"onFFTDataCallback",
+                                                      "([SI)V");
+        if (fftMethodId == nullptr) {
+            LOGE("Unable to find method:%s", "onFFTDataCallback");
+            return;
+        }
+
+        jshortArray fftArray = (*env).NewShortArray(length);
+        (*env).SetShortArrayRegion(fftArray, 0, length, fftData);
+
+        (*env).CallVoidMethod(callback_J, fftMethodId, fftArray, length);
+
         (*env).DeleteLocalRef(javaClass);
         (*env).DeleteLocalRef(inputArray);
+        (*env).DeleteLocalRef(fftArray);
 
         //释放当前线程
         if(mNeedDetach) {
@@ -49,4 +67,5 @@ void AudioEngineCallback::onRecordDataCallback(short *data, int32_t length) {
     } catch (const std::exception& e) {
         LOGE("onRecordDataCallback %s", e.what());
     }
+
 }

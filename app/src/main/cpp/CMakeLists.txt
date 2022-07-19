@@ -9,14 +9,15 @@ cmake_minimum_required(VERSION 3.10.2)
 
 project("recordkit")
 
-set (OBOE_DIR ../../../../)
+set (PROJECT_ROOT_DIR ../../../../)
 
 #第二个参数默认目录是cmake的Entering directory
-add_subdirectory(${OBOE_DIR}/oboe-core ../../../../../oboe-bin)
+add_subdirectory(${PROJECT_ROOT_DIR}/oboe-core ../../../../../oboe-bin)
+add_subdirectory(${PROJECT_ROOT_DIR}/speex-core ../../../../../speex-bin)
 
 MESSAGE("current dir: "${CMAKE_CURRENT_SOURCE_DIR})
 
-include_directories(${OBOE_DIR}/oboe-core/include ${OBOE_DIR}/oboe-core/shared)
+include_directories(${PROJECT_ROOT_DIR}/oboe-core/include ${PROJECT_ROOT_DIR}/oboe-core/shared ${PROJECT_ROOT_DIR}/speex-core/include ${PROJECT_ROOT_DIR}/speex-core/libspeexdsp)
 
 
 # Creates and names a library, sets it as either STATIC
@@ -46,6 +47,7 @@ aux_source_directory(../cpp APP_SOURCES)
 aux_source_directory(../cpp/wave APP_SOURCES)
 aux_source_directory(../cpp/utils APP_SOURCES)
 aux_source_directory(../cpp/global APP_SOURCES)
+aux_source_directory(../cpp/fft APP_SOURCES)
 
 
 add_library( # Sets the name of the library.
@@ -78,6 +80,7 @@ target_link_libraries( # Specifies the target library.
         recordkit
 #        android
         oboe
+        speex
         # Links the target library to the log library
         # included in the NDK.
         ${log-lib})

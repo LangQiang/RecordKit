@@ -1,26 +1,17 @@
 package com.lq.record;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.HandlerThread;
-import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.lq.record.databinding.ActivityMainBinding;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 
@@ -62,16 +53,76 @@ public class MainActivity extends AppCompatActivity {
 
 
         lEngine.init(new LEngineCallback() {
+
+            private long time = 0;
+
+            private int count = 0;
+
+            private long total = 0;
+
+            private FrameCallback frameCallback = new FrameCallback() {
+                @Override
+                public void callback(short value) {
+                    binding.pcmOriginView.post(() -> {
+                       binding.pcmOriginView.appendData(value);
+                    });
+                    Log.e("ui", "value:" + value);
+                }
+
+                @Override
+                public void fft(short[] values) {
+                    binding.fftView.post(() -> {
+                        binding.fftView.refresh(values);
+                    });
+                }
+            };
+
             @Override
             public void onRecordDataCallback(short[] data, int length) {
                 try {
-//                    DataOutputStream dataOutputStream = new DataOutputStream(new FileOutputStream(file));
-//                    for (short datum : data) {
-//                        dataOutputStream.writeShort(datum);
-//                    }
-//                    dataOutputStream.close();
+                    long cur = System.currentTimeMillis();
+
+
+                    if (cur - time >= 16) {
+                        time = cur;
+                        if (count != 0) {
+                            frameCallback.callback((short) (total / count));
+                        }
+                        count = 0;
+                        total = 0;
+                    } else {
+                        long tempT = 0;
+                        for (short datum : data) {
+                            tempT += datum;
+                        }
+                        total += (tempT / length);
+                        count ++;
+                    }
                 } catch (Exception e) {
 
+                }
+            }
+            private long fftTime = 0;
+            private short[] last = new short[1000];
+            private int fftCount = 0;
+
+            @Override
+            public void onFFTDataCallback(short[] fftData, int length) {
+                long cur = System.currentTimeMillis();
+                if (cur - fftTime >= 500) {
+                    fftTime = cur;
+                    for (int i = 0; i < length; i++) {
+                        fftData[i] = (short) ((last[i] + fftData[i]) / (fftCount + 1));
+                        last[i] = 0;
+                    }
+                    frameCallback.fft(fftData);
+                    fftCount = 0;
+
+                } else {
+                    fftCount ++;
+                    for (int i = 0; i < length; i++) {
+                        last[i] += fftData[i];
+                    }
                 }
             }
         });
@@ -102,6 +153,7 @@ public class MainActivity extends AppCompatActivity {
         test.setOnClickListener(this::testOnclick);
 
         mix.setOnClickListener(this::mixClick);
+
     }
 
     private void mixClick(View view) {
@@ -119,5 +171,10 @@ public class MainActivity extends AppCompatActivity {
      * which is packaged with this application.
      */
     public native String stringFromJNI();
+
+    interface FrameCallback {
+        void callback(short value);
+        void fft(short[] values);
+    }
 
 }

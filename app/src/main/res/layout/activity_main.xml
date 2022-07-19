@@ -6,6 +6,24 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <com.lq.record.PcmOriginView
+        android:id="@+id/pcm_origin_view"
+        android:background="#10000000"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"/>
+
+    <com.lq.record.FFTView
+        android:id="@+id/fft_view"
+        android:background="#10000000"
+        app:layout_constraintTop_toBottomOf="@+id/pcm_origin_view"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"/>
+
     <Button
         app:layout_constraintBottom_toTopOf="@+id/sample_text"
         app:layout_constraintLeft_toLeftOf="@+id/sample_text"

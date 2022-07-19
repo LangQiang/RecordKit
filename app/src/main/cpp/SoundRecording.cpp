@@ -8,6 +8,7 @@
 #include "AudioEngine.h"
 #include "global/GlobalConfig.h"
 #include "pthread.h"
+#include "speex/speex_preprocess.h"
 
 int32_t SoundRecording::write(const int16_t *sourceData, int32_t numSamples) {
 
@@ -75,6 +76,8 @@ int32_t SoundRecording::save(const char *outPutFile, int32_t channels, int32_t s
     return 0;
 }
 
+SpeexPreprocessState *preprocess_state = speex_preprocess_state_init(128, 48000);
+
 
 void *SoundRecording::write2File(void *args) {
     std::ofstream outFile;
@@ -89,6 +92,9 @@ void *SoundRecording::write2File(void *args) {
             DataPatch dataPatch = ((SoundRecording * )args)->blockingQueue.pop();
             int16_t *sourceData = dataPatch.data;
             int32_t samples = dataPatch.numSamples;
+            LOGE("test NumSamples:%d", dataPatch.numSamples);
+            speex_preprocess_run(preprocess_state, sourceData);
+
             outFile.write((char *)sourceData, static_cast<std::streamsize>(samples * sizeof (int16_t)));
         } catch (char const*) {
             continue;
@@ -130,6 +136,7 @@ short remix(short data1,short data2) {
 
 //todo 测试混合效果
 void SoundRecording::mix(const char *mix1, const char *mix2) {
+
     std::ifstream inStream1(mix1, std::ios::binary | std::ios::in);
 //    inStream1.seekg(44, std::ios::beg);
 
@@ -143,14 +150,25 @@ void SoundRecording::mix(const char *mix1, const char *mix2) {
     inStream1.read(header, sizeof (char ) * 44);
     outStream.write(header, inStream1.gcount());
 
-    while (!inStream1.eof() && !inStream2.eof()) {
+    SpeexPreprocessState *preprocess_state = speex_preprocess_state_init(1024, 48000);
+
+
+    while (!inStream1.eof() /*&& !inStream2.eof()*/) {
         short data1;
         short data2;
-        inStream1.read((char *) &data1, sizeof (data1));
-        inStream2.read((char *) &data2, sizeof (data2));
+
+        spx_int16_t spxBuff[1024] = {0};
+        inStream1.read((char *)spxBuff, sizeof (spx_int16_t) * 1024);
+
+        speex_preprocess_run(preprocess_state, spxBuff);
+
+
+
+//        inStream1.read((char *) &data1, sizeof (data1));
+//        inStream2.read((char *) &data2, sizeof (data2));
 //        short ret = remixLiner(data1, data2);
-        short ret = remix(data1, data2);
-        outStream.write((char *)&ret, sizeof (ret));
+//        short ret = remix(data1, data2);
+        outStream.write((char *)&spxBuff, sizeof (spxBuff));
     }
     inStream1.close();
     inStream2.close();
