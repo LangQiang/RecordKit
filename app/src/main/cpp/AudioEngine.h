@@ -10,7 +10,6 @@
 #include <oboe/AudioStreamBuilder.h>
 #include "Log.h"
 #include "jni.h"
-#include "AudioEngineCallback.h"
 #include "RecordingCallBack.h"
 #include "SoundRecording.h"
 #include "AudioConfig.h"
@@ -27,8 +26,6 @@ public:
     void stop();
 
     void save(const char *string);
-
-    void setDelegate(AudioEngineCallback *audioEngineCallback);
 
     void mix(const char *mix1, const char *mix2);
 

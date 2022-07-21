@@ -15,7 +15,7 @@ import java.util.Arrays;
 
 public class FFTView extends View {
 
-    short[] values = {};
+    Spectrum[] values = {};
 
     private Paint paint;
 
@@ -72,14 +72,14 @@ public class FFTView extends View {
             rect.left = i * interval;
             rect.bottom = y;
             rect.right = rect.left + interval;
-            rect.top = y - values[i];
+            rect.top = y - values[i].db;
             canvas.drawRect(rect, paint);
 //            path.lineTo(x * i / size, y + values[i] / 300f * y);
         }
 //        canvas.drawPath(path, paint);
     }
 
-    public void refresh(short[] values) {
+    public void refresh(Spectrum[] values) {
         this.values = values;
         Log.e("test", Arrays.toString(values));
         invalidate();

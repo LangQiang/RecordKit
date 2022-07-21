@@ -11,11 +11,10 @@
 
 static AudioEngine *audioEngine = nullptr;
 
-static AudioEngineCallback *audioEngineCallback = nullptr;
-
 
 JavaVM *g_VM = nullptr;
 int64_t mainThreadId = 0;
+jobject spectrumObj = nullptr;
 
 extern "C"
 JNIEXPORT jint JNICALL
@@ -25,13 +24,17 @@ Java_com_lq_record_LEngine_init(JNIEnv *env, jobject jObj, jobject l_engine_call
         audioEngine = new AudioEngine();
     }
 
+    jclass testCl = env->FindClass("com/lq/record/Spectrum");
+    jmethodID id = env->GetMethodID(testCl, "<init>","()V");
+    jobject temp = env->NewObject(testCl,id);
+    spectrumObj = env->NewGlobalRef(temp);
+    env->DeleteLocalRef(temp);
+
     mainThreadId = SysUtils::getCurrentThreadId();
     LOGD("mainThreadId:%ld", mainThreadId);
     (*env).GetJavaVM(&g_VM);
 
-    audioEngineCallback = new AudioEngineCallback();
-    audioEngineCallback->callback_J = (*env).NewGlobalRef(l_engine_callback);
-    audioEngine->setDelegate(audioEngineCallback);
+    AudioEngineCallback::getInstance()->callback_J = (*env).NewGlobalRef(l_engine_callback);
 
     return 0;
 }

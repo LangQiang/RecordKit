@@ -10,15 +10,12 @@
 #include <oboe/AudioStream.h>
 #include "Log.h"
 #include "SoundRecording.h"
-#include "AudioEngineCallback.h"
 
 class RecordingCallBack : public oboe::AudioStreamCallback {
 
 private:
 
     SoundRecording* mSoundRecording = nullptr;
-
-    AudioEngineCallback *delegate;
 
 public:
     RecordingCallBack() = default;
@@ -30,7 +27,6 @@ public:
                                           void *audioData,
                                           int32_t numFrames);
 
-    void setDelegate(AudioEngineCallback *audioEngineCallback);
 };
 
 

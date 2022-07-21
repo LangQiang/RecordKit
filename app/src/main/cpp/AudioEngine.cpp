@@ -60,7 +60,7 @@ void AudioEngine::openRecordingStream() {
             ->setChannelCount(audioConfig->mInputChannelCount)
             ->setDirection(Direction::Input)
             ->setCallback(recordingCallBack)
-            ->setFramesPerCallback(128)
+            ->setFramesPerCallback(audioConfig->mPerData)
             ;
 
     Result result = builder.openStream(&mRecordingStream);
@@ -99,9 +99,6 @@ void AudioEngine::save(const char *outFileName) {
                           16);
 }
 
-void AudioEngine::setDelegate(AudioEngineCallback *audioEngineCallback) {
-    recordingCallBack->setDelegate(audioEngineCallback);
-}
 
 void AudioEngine::mix(const char *mix1, const char *mix2) {
     mSoundRecording->mix(mix1, mix2);

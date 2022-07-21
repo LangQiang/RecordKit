@@ -10,6 +10,7 @@
 
 extern JavaVM *g_VM;
 extern int64_t mainThreadId;
+extern jobject spectrumObj;
 const static char *tempPath = "/storage/emulated/0/Android/data/com.lq.record/files/test.pcm";
 
 

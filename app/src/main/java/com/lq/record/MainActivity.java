@@ -51,6 +51,11 @@ public class MainActivity extends AppCompatActivity {
         File file = new File(getExternalFilesDir(null), "record2.wav");
         Log.e("filePath", file.getAbsolutePath());
 
+        Spectrum[] last = new Spectrum[1000];
+
+        for (int i = 0; i < last.length; i++) {
+            last[i] = new Spectrum((short) 0, 0);
+        }
 
         lEngine.init(new LEngineCallback() {
 
@@ -70,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void fft(short[] values) {
+                public void fft(Spectrum[] values) {
                     binding.fftView.post(() -> {
                         binding.fftView.refresh(values);
                     });
@@ -103,17 +108,17 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             private long fftTime = 0;
-            private short[] last = new short[1000];
+
             private int fftCount = 0;
 
             @Override
-            public void onFFTDataCallback(short[] fftData, int length) {
+            public void onFFTDataCallback(Spectrum[] fftData, int length) {
                 long cur = System.currentTimeMillis();
                 if (cur - fftTime >= 500) {
                     fftTime = cur;
                     for (int i = 0; i < length; i++) {
-                        fftData[i] = (short) ((last[i] + fftData[i]) / (fftCount + 1));
-                        last[i] = 0;
+                        fftData[i].db = (short) ((last[i].db + fftData[i].db) / (fftCount + 1));
+                        last[i].db = 0;
                     }
                     frameCallback.fft(fftData);
                     fftCount = 0;
@@ -121,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     fftCount ++;
                     for (int i = 0; i < length; i++) {
-                        last[i] += fftData[i];
+                        last[i].db += fftData[i].db;
                     }
                 }
             }
@@ -174,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
 
     interface FrameCallback {
         void callback(short value);
-        void fft(short[] values);
+        void fft(Spectrum[] values);
     }
 
 }

@@ -3,6 +3,7 @@
 //
 
 #include "RecordingCallBack.h"
+#include "AudioEngineCallback.h"
 
 oboe::DataCallbackResult
 RecordingCallBack::onAudioReady(oboe::AudioStream *audioStream, void *audioData,
@@ -15,14 +16,11 @@ RecordingCallBack::onAudioReady(oboe::AudioStream *audioStream, void *audioData,
     LOGI("read(): ");
     mSoundRecording->write(inputData, num);
 
-    delegate->onRecordDataCallback(inputData, num);
+    AudioEngineCallback::getInstance()->onRecordDataCallback(inputData, num);
 
     return oboe::DataCallbackResult::Continue;
 }
 
-void RecordingCallBack::setDelegate(AudioEngineCallback *audioEngineCallback) {
-    delegate = audioEngineCallback;
-}
 
 
 

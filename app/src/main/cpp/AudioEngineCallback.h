@@ -13,12 +13,24 @@
 #include "global/GlobalConfig.h"
 
 class AudioEngineCallback {
-public:
 
-    void onRecordDataCallback(short *data, int32_t length);
+private:
+    AudioEngineCallback() {}
+    AudioEngineCallback(AudioEngineCallback&)=delete;
+    AudioEngineCallback& operator=(const AudioEngineCallback&)=delete;
+    static AudioEngineCallback* INSTANCE;
+
+public:
+    ~AudioEngineCallback() {}
+
+    static AudioEngineCallback* getInstance();
+
+    void onRecordDataCallback(short *data, int32_t length) const;
 
     jobject callback_J;
 };
+
+
 
 
 #endif //RECORDKIT_AUDIOENGINECALLBACK_H

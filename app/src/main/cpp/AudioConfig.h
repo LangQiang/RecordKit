@@ -21,6 +21,8 @@ public:
     int32_t mInputChannelCount = ChannelCount::Mono;
     int32_t mOutputChannelCount = ChannelCount::Mono;
 
+    int32_t mPerData = 128;
+
     AudioApi mAudioApi = AudioApi::AAudio;
 
     SharingMode sharingMode = SharingMode::Exclusive;

@@ -10,14 +10,18 @@
 #  define kiss_fft_scalar spx_int16_t
 
 #include <cstdint>
-#include "kiss_fft.h"
+#include "kiss_fftr.h"
 #include "../Log.h"
 
-
+struct Spectrum {
+    int16_t amplitude;
+    int32_t frequency;
+};
 
 class FFTHelper {
 public:
     static void fft(const short *data, int32_t length, short *outData);
+    static void fft(const short *data, int32_t length, Spectrum *outData);
 };
 
 
