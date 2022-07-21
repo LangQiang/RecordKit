@@ -7,7 +7,7 @@
 
 AudioEngineCallback* AudioEngineCallback::INSTANCE = nullptr;
 
-void originDataCallback(jobject callback_J, short *data, int32_t length) {
+void originDataCallback(jobject callback_J, int16_t *data, int32_t length) {
     JNIEnv *env;
     int mNeedDetach = 0;
     try {
@@ -136,7 +136,7 @@ void fftDataCallback(jobject callback_J, Spectrum *fftData, int32_t length) {
     }
 }
 
-void AudioEngineCallback::onRecordDataCallback(short *data, int32_t length) const {
+void AudioEngineCallback::onRecordDataCallback(int16_t *data, int32_t length) const {
     originDataCallback(callback_J, data, length);
 
     //fft

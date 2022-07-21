@@ -118,13 +118,13 @@ void SoundRecording::stop() {
     blockingQueue.interrupt();
 }
 
-short remixLiner(short buffer1,short buffer2) { //线性叠加求平均
+short remixLiner(int16_t buffer1,int16_t buffer2) { //线性叠加求平均
     int value = buffer1 + buffer2;
-    return (short)(value/2);
+    return (int16_t)(value/2);
 }
 
-short remix(short data1,short data2) {
-    short date_mix;
+int16_t remix(int16_t data1,int16_t data2) {
+    int16_t date_mix;
     if( data1 < 0 && data2 < 0)
         date_mix = data1 + data2 - (data1 * data2 / -(pow(2,16-1)-1));
     else
@@ -154,8 +154,8 @@ void SoundRecording::mix(const char *mix1, const char *mix2) {
 
 
     while (!inStream1.eof() /*&& !inStream2.eof()*/) {
-        short data1;
-        short data2;
+        int16_t data1;
+        int16_t data2;
 
         spx_int16_t spxBuff[1024] = {0};
         inStream1.read((char *)spxBuff, sizeof (spx_int16_t) * 1024);
@@ -166,8 +166,8 @@ void SoundRecording::mix(const char *mix1, const char *mix2) {
 
 //        inStream1.read((char *) &data1, sizeof (data1));
 //        inStream2.read((char *) &data2, sizeof (data2));
-//        short ret = remixLiner(data1, data2);
-//        short ret = remix(data1, data2);
+//        int16_t ret = remixLiner(data1, data2);
+//        int16_t ret = remix(data1, data2);
         outStream.write((char *)&spxBuff, sizeof (spxBuff));
     }
     inStream1.close();

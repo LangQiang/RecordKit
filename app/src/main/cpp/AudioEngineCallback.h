@@ -25,7 +25,7 @@ public:
 
     static AudioEngineCallback* getInstance();
 
-    void onRecordDataCallback(short *data, int32_t length) const;
+    void onRecordDataCallback(int16_t *data, int32_t length) const;
 
     jobject callback_J;
 };

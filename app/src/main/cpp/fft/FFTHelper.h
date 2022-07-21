@@ -20,8 +20,7 @@ struct Spectrum {
 
 class FFTHelper {
 public:
-    static void fft(const short *data, int32_t length, short *outData);
-    static void fft(const short *data, int32_t length, Spectrum *outData);
+    static void fft(const int16_t *data, int32_t length, Spectrum *outData);
 };
 
 
